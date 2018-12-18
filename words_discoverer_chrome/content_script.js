@@ -357,17 +357,22 @@ function unhighlight(lemma) {
 }
 
 /**
+ * TODO 取消高亮后再进行显示 目前无法做到
+ * 难点 无法准确的获取到所选的字段的位置导致 高亮渲染有问题
+ *
  * 高亮显示
+ * 高亮显示失败 暂时无法进行高亮 显示
+ * TODO
  * @param lemma
  */
 function highlight(lemma) {
-    var wdclassname = make_class_name(lemma);
-    var hlNodes = document.getElementsByClassName(wdclassname);
-    while (hlNodes && hlNodes.length > 0) {
-        var span = hlNodes[0];
-        span.setAttribute("style", "font-weight:bold;color:red;font-size:inherit;display:inline;");
-        span.setAttribute("class", "wdautohl_cmV0YWxpYXRvcnk_");
-    }
+    // var wdclassname = make_class_name(lemma);
+    // var hlNodes = document.getElementsByClassName(wdclassname);
+    // while (hlNodes && hlNodes.length > 0) {
+    //     var span = hlNodes[0];
+    //     span.setAttribute("style", "font-weight:bold;color:red;font-size:inherit;display:inline;");
+    //     span.setAttribute("class", "wdautohl_cmV0YWxpYXRvcnk_");
+    // }
 }
 
 function get_verdict(is_enabled, black_list, white_list, hostname) {
