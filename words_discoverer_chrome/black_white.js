@@ -32,17 +32,17 @@ function process_delete_vocab_entry(key) {
 }
 
 // 从没有掌握中删除
-function process_delete_user_not_handled_entry(key) {
-    chrome.storage.local.get(['wd_user_vocab_added','wd_user_not_handled'], function(result) {
-        var wd_user_vocab_added = result.wd_user_vocab_added;
+function process_delete_user_not_handled_entry(key,text) {
+    chrome.storage.local.get(['wd_user_vocabulary','wd_user_not_handled'], function(result) {
+        var user_vocabulary = result.wd_user_vocabulary;
         var wd_user_not_handled = result.wd_user_not_handled;
 
+        delete wd_user_not_handled[text];
         var new_state = {'wd_user_not_handled': wd_user_not_handled};
-        delete wd_user_not_handled[key];
 
-        if (typeof wd_user_vocab_added !== 'undefined') {
-            wd_user_vocab_added[key] = 1;
-            new_state['wd_user_vocab_added'] = wd_user_vocab_added;
+        if (typeof user_vocabulary !== 'undefined') {
+            user_vocabulary[text] = 1;
+            new_state['wd_user_vocabulary'] = user_vocabulary;
         }
         chrome.storage.local.set(new_state, sync_if_needed);
         show_user_list('wd_user_not_handled', wd_user_not_handled);
@@ -75,7 +75,7 @@ function create_label(text) {
 
 
 function show_user_list(list_name, user_list) {
-    console.log("show user List"+list_name);
+    console.log("show user List: "+list_name);
     var keys = []
     for (var key in user_list) {
         if (user_list.hasOwnProperty(key)) {
@@ -105,7 +105,7 @@ function show_user_list(list_name, user_list) {
 
 
 function process_display() {
-    console.log("load black js");
+
     // TODO replace this clumsy logic by adding a special "data-list-name" attribute and renaming all 3 tags to "userListSection"
     if (document.getElementById("blackListSection")) {
         list_name = "wd_black_list";
@@ -125,5 +125,6 @@ function process_display() {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
+    console.log("load black_white js");
     process_display();
 });
