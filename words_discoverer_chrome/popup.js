@@ -126,11 +126,11 @@ function popup_handle_notHandle_add_result(report, lemma) {
         request_highlight(lemma);
         display_vocabulary_notHandled_size();
         document.getElementById('addNotHandledText').value = "";
-        document.getElementById('addOpResult').textContent = chrome.i18n.getMessage("addSuccess");
+        document.getElementById('addNotHandledOpResult').textContent = chrome.i18n.getMessage("addSuccess");
     } else if (report === "exists") {
-        document.getElementById('addOpResult').textContent = chrome.i18n.getMessage("addErrorDupp");
+        document.getElementById('addNotHandledOpResult').textContent = chrome.i18n.getMessage("addErrorDupp");
     } else {
-        document.getElementById('addOpResult').textContent = chrome.i18n.getMessage("addErrorBad");
+        document.getElementById('addNotHandledOpResult').textContent = chrome.i18n.getMessage("addErrorBad");
     }
 }
 
@@ -156,7 +156,7 @@ function process_add_word() {
  * 添加生词
  */
 function process_add_notHandled_word() {
-    lexeme = document.getElementById('addText').value;
+    lexeme = document.getElementById('addNotHandledText').value;
     if (lexeme === 'dev-mode-on') {
         chrome.storage.local.set({"wd_developer_mode": true});
         document.getElementById('addText').value = "";
