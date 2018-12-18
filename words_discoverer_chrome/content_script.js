@@ -1,5 +1,6 @@
 var dict_words = null;
 var dict_idioms = null;
+var wd_user_not_handled = null;
 
 var min_show_rank = null;
 var word_max_rank = null;
@@ -483,7 +484,9 @@ function initForPage() {
     });
 
 
-    chrome.storage.local.get(['words_discoverer_eng_dict', 'wd_online_dicts', 'wd_idioms', 'wd_hover_settings', 'wd_word_max_rank', 'wd_show_percents', 'wd_is_enabled', 'wd_user_vocabulary', 'wd_hl_settings', 'wd_black_list', 'wd_white_list', 'wd_enable_tts'], function (result) {
+    // 获取没有掌握的单词 添加到需要查询的单词中-高亮显示 生词本中的单词
+    chrome.storage.local.get(['wd_user_not_handled','words_discoverer_eng_dict', 'wd_online_dicts', 'wd_idioms', 'wd_hover_settings', 'wd_word_max_rank', 'wd_show_percents', 'wd_is_enabled', 'wd_user_vocabulary', 'wd_hl_settings', 'wd_black_list', 'wd_white_list', 'wd_enable_tts'], function (result) {
+        wd_user_not_handled =result.wd_user_not_handled;
         dict_words = result.words_discoverer_eng_dict;
         dict_idioms = result.wd_idioms;
         wd_online_dicts = result.wd_online_dicts;
@@ -497,6 +500,24 @@ function initForPage() {
         is_enabled = result.wd_is_enabled;
         var black_list = result.wd_black_list;
         var white_list = result.wd_white_list;
+
+
+        // 无效
+        // var key = "";
+        //
+        // var new_state = {'words_discoverer_eng_dict': dict_words};
+        // if (typeof dict_words !== 'undefined' && wd_user_not_handled !== 'undefined') {
+        //     for(key in wd_user_not_handled){
+        //         if (!dict_words.hasOwnProperty(key)) {
+        //             dict_words[key] = 1;
+        //         }
+        //     }
+        //     new_state['words_discoverer_eng_dict'] = dict_words;
+        //     chrome.storage.local.set(new_state, function() {
+        //         sync_if_needed();
+        //     });
+        // }
+
 
         //TODO simultaneously send page language request here
         chrome.runtime.sendMessage({wdm_request: "hostname"}, function (response) {
