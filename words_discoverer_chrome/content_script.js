@@ -462,23 +462,21 @@ function initForPage() {
 
     /**
      * 非高亮监听
+     * 和高亮监听
      */
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        console.log("高亮和非高亮监听");
         if (request.wdm_unhighlight) {
             var lemma = request.wdm_unhighlight;
             unhighlight(lemma);
         }
-    });
 
-    /**
-     * 高亮监听
-     */
-    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.wdm_highlight) {
             var lemma = request.wdm_highlight;
             highlight(lemma);
         }
     });
+
 
     chrome.storage.local.get(['words_discoverer_eng_dict', 'wd_online_dicts', 'wd_idioms', 'wd_hover_settings', 'wd_word_max_rank', 'wd_show_percents', 'wd_is_enabled', 'wd_user_vocabulary', 'wd_hl_settings', 'wd_black_list', 'wd_white_list', 'wd_enable_tts'], function (result) {
         dict_words = result.words_discoverer_eng_dict;
