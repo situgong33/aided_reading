@@ -199,9 +199,31 @@ function context_handle_add_result(report, lemma) {
     }
 }
 
+/**
+ * 添加生词回调
+ * @param report
+ * @param lemma
+ */
+function context_handle_nothandled_add_result(report, lemma) {
+    if (report === "ok") {
+        request_highlight(lemma);
+    }
+}
+
+/**
+ * control 控制
+ * @param info
+ * @param tab
+ */
 function onClickHandler(info, tab) {
+    console.log("load context_menu_lib.js");
     var word = info.selectionText;
     add_lexeme(word, context_handle_add_result);
+};
+function onClickHandlerNotHandler(info, tab) {
+    console.log("add  Not Handled Word.");
+    var word = info.selectionText;
+    add_lexemeToNotHandle(word, context_handle_nothandled_add_result);
 };
 
 
@@ -220,10 +242,14 @@ function make_default_online_dicts() {
     return result;
 }
 
-function initContextMenus(dictPairs) {
+function    initContextMenus(dictPairs) {
+    console.log("load context_menu_lib.js");
     chrome.contextMenus.removeAll(function() {
         var title = chrome.i18n.getMessage("menuItem");
-        chrome.contextMenus.create({"title": title, "contexts":["selection"], "id": "vocab_select_add", "onclick": onClickHandler}); 
+        var titleAddnotHandled = "add to notHandled";
+
+        chrome.contextMenus.create({"title": title, "contexts":["selection"], "id": "vocab_select_add", "onclick": onClickHandler});
+        chrome.contextMenus.create({"title": titleAddnotHandled, "contexts":["selection"], "id": "vocab_select_add_notHandled", "onclick": onClickHandlerNotHandler});
         chrome.contextMenus.create({type: 'separator', "contexts":["selection"], "id": "wd_separator_id"});
         for (var i = 0; i < dictPairs.length; ++i) {
             createDictionaryEntry(dictPairs[i].title, dictPairs[i].url, "wd_define_" + i);

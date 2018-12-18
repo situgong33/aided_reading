@@ -1,4 +1,4 @@
-var list_section_names = {'wd_black_list': 'blackListSection', 'wd_white_list': 'whiteListSection', 'wd_user_vocabulary': 'vocabularySection'};
+var list_section_names = {'wd_black_list': 'blackListSection', 'wd_white_list': 'whiteListSection', 'wd_user_vocabulary': 'vocabularySection','wd_user_not_handled':'vocabularyNeedLearnSection'};
 
 function process_delete_simple(list_name, key) {
     chrome.storage.local.get([list_name], function(result) {
@@ -10,10 +10,12 @@ function process_delete_simple(list_name, key) {
 }
 
 function process_delete_vocab_entry(key) {
-    chrome.storage.local.get(['wd_user_vocabulary', 'wd_user_vocab_added', 'wd_user_vocab_deleted'], function(result) {
+    chrome.storage.local.get(['wd_user_vocabulary', 'wd_user_vocab_added', 'wd_user_vocab_deleted','wd_user_not_handled'], function(result) {
         var user_vocabulary = result.wd_user_vocabulary;
         var wd_user_vocab_added = result.wd_user_vocab_added;
         var wd_user_vocab_deleted = result.wd_user_vocab_deleted;
+        var wd_user_not_handled = result.wd_user_not_handled;
+
         var new_state = {'wd_user_vocabulary': user_vocabulary};
         delete user_vocabulary[key];
         if (typeof wd_user_vocab_added !== 'undefined') {
@@ -29,12 +31,32 @@ function process_delete_vocab_entry(key) {
     });
 }
 
+// 从没有掌握中删除
+function process_delete_user_not_handled_entry(key) {
+    chrome.storage.local.get(['wd_user_vocab_added','wd_user_not_handled'], function(result) {
+        var wd_user_vocab_added = result.wd_user_vocab_added;
+        var wd_user_not_handled = result.wd_user_not_handled;
+
+        var new_state = {'wd_user_not_handled': wd_user_not_handled};
+        delete wd_user_not_handled[key];
+
+        if (typeof wd_user_vocab_added !== 'undefined') {
+            wd_user_vocab_added[key] = 1;
+            new_state['wd_user_vocab_added'] = wd_user_vocab_added;
+        }
+        chrome.storage.local.set(new_state, sync_if_needed);
+        show_user_list('wd_user_not_handled', wd_user_not_handled);
+    });
+}
+
 function create_button(list_name, text) {
     var result = document.createElement("button");
     result.setAttribute("class", "deleteButton");
     result.expression_text = text;
     if (list_name === 'wd_user_vocabulary') {
         result.addEventListener("click", function(){ process_delete_vocab_entry(this.expression_text); });
+    } else if (list_name === 'wd_user_not_handled') {
+        result.addEventListener("click", function(){ process_delete_user_not_handled_entry(list_name, this.expression_text); });
     } else {
         result.addEventListener("click", function(){ process_delete_simple(list_name, this.expression_text); });
     }
@@ -53,6 +75,7 @@ function create_label(text) {
 
 
 function show_user_list(list_name, user_list) {
+    console.log("show user List"+list_name);
     var keys = []
     for (var key in user_list) {
         if (user_list.hasOwnProperty(key)) {
@@ -82,13 +105,17 @@ function show_user_list(list_name, user_list) {
 
 
 function process_display() {
+    console.log("load black js");
     // TODO replace this clumsy logic by adding a special "data-list-name" attribute and renaming all 3 tags to "userListSection"
     if (document.getElementById("blackListSection")) {
         list_name = "wd_black_list";
     } else if (document.getElementById("whiteListSection")) {
         list_name = "wd_white_list";
+    } else if (document.getElementById("vocabularyNeedLearnSection")) {
+        list_name = "wd_user_not_handled";
     } else {
         list_name = "wd_user_vocabulary";
+        
     }
 
     chrome.storage.local.get([list_name], function(result) {

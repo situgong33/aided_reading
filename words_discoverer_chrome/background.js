@@ -443,7 +443,7 @@ function initialize_extension() {
         }
     });
 
-    chrome.storage.local.get(['words_discoverer_eng_dict', 'wd_hl_settings', 'wd_online_dicts', 'wd_hover_settings', 'wd_idioms', 'wd_show_percents', 'wd_is_enabled', 'wd_user_vocabulary', 'wd_black_list', 'wd_white_list', 'wd_gd_sync_enabled', 'wd_enable_tts'], function (result) {
+    chrome.storage.local.get(['wd_user_not_handled','words_discoverer_eng_dict', 'wd_hl_settings', 'wd_online_dicts', 'wd_hover_settings', 'wd_idioms', 'wd_show_percents', 'wd_is_enabled', 'wd_user_vocabulary', 'wd_black_list', 'wd_white_list', 'wd_gd_sync_enabled', 'wd_enable_tts'], function (result) {
         load_eng_dictionary();
         load_idioms();
         wd_hl_settings = result.wd_hl_settings;
@@ -472,6 +472,12 @@ function initialize_extension() {
             };
             chrome.storage.local.set({"wd_hl_settings": wd_hl_settings});
         }
+        //初始化 not handled 数据库
+        wd_user_not_handled = result.wd_user_not_handled;
+        if (typeof wd_user_not_handled == 'undefined') {
+            chrome.storage.local.set({"wd_user_not_handled": {}});
+        }
+
         wd_enable_tts = result.wd_enable_tts;
         if (typeof wd_enable_tts == 'undefined') {
             chrome.storage.local.set({"wd_enable_tts": false});
@@ -486,6 +492,7 @@ function initialize_extension() {
             wd_online_dicts = make_default_online_dicts();
             chrome.storage.local.set({"wd_online_dicts": wd_online_dicts});
         }
+        console.log("初始化右键菜单");
         initContextMenus(wd_online_dicts);
 
         show_percents = result.wd_show_percents;

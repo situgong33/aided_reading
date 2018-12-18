@@ -32,6 +32,10 @@
     "message": "您的词汇量：",
     "description": "1-st part of \"Your vocabulary size: 100 words.\" sentence"
   },
+  "vocabNotHandleSizeInfo1": {
+    "message": "生词本词汇量：",
+    "description": "1-st part of \"Your not handle vocabulary size: 100 words.\" sentence"
+  },
   "vocabSizeInfo2": {
     "message": "单词",
     "description": "2-nd part of \"Your vocabulary size: 100 words.\" sentence"

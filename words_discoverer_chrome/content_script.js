@@ -342,7 +342,10 @@ function onNodeInserted(event) {
     }
 }
 
-
+/**
+ * 去除高亮显示
+ * @param lemma
+ */
 function unhighlight(lemma) {
     var wdclassname = make_class_name(lemma);
     var hlNodes = document.getElementsByClassName(wdclassname);
@@ -353,6 +356,19 @@ function unhighlight(lemma) {
     }
 }
 
+/**
+ * 高亮显示
+ * @param lemma
+ */
+function highlight(lemma) {
+    var wdclassname = make_class_name(lemma);
+    var hlNodes = document.getElementsByClassName(wdclassname);
+    while (hlNodes && hlNodes.length > 0) {
+        var span = hlNodes[0];
+        span.setAttribute("style", "font-weight:bold;color:red;font-size:inherit;display:inline;");
+        span.setAttribute("class", "wdautohl_cmV0YWxpYXRvcnk_");
+    }
+}
 
 function get_verdict(is_enabled, black_list, white_list, hostname) {
     if (black_list.hasOwnProperty(hostname)) {
@@ -376,6 +392,8 @@ function bubble_handle_add_result(report, lemma) {
 }
 
 function create_bubble() {
+
+    console.log("create bubble");
     var bubbleDOM = document.createElement('div');
     bubbleDOM.setAttribute('class', 'wdSelectionBubble');
     bubbleDOM.setAttribute("id", "wd_selection_bubble")
@@ -438,13 +456,27 @@ function create_bubble() {
 
 
 function initForPage() {
+    console.log("load content_script.js");
     if (!document.body)
         return;
 
+    /**
+     * 非高亮监听
+     */
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.wdm_unhighlight) {
             var lemma = request.wdm_unhighlight;
             unhighlight(lemma);
+        }
+    });
+
+    /**
+     * 高亮监听
+     */
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if (request.wdm_highlight) {
+            var lemma = request.wdm_highlight;
+            highlight(lemma);
         }
     });
 

@@ -60,6 +60,11 @@ function process_show() {
       // opens import dialong in new tab
     });
 }
+function process_notHandled_show() {
+    chrome.tabs.create({'url': chrome.extension.getURL('displayNotHandle.html')}, function(tab) {
+      // opens import dialong in new tab
+    });
+}
 
 function process_help() {
     chrome.tabs.create({'url': chrome.extension.getURL('help.html')}, function(tab) {
@@ -81,7 +86,23 @@ function display_vocabulary_size() {
     });
 }
 
+/**
+ * 显示生词本词汇量
+ */
+function display_vocabulary_notHandled_size() {
+    chrome.storage.local.get(['wd_user_not_handled'], function(result) {
+        var wd_user_not_handled = result.wd_user_not_handled;
+        var vocab_size = Object.keys(wd_user_not_handled).length;
+        document.getElementById("vocabNotHandledIndicator").textContent = vocab_size;
+    });
+}
 
+
+/**
+ * 添加掌握的单词回调
+ * @param report
+ * @param lemma
+ */
 function popup_handle_add_result(report, lemma) {
     if (report === "ok") {
         request_unhighlight(lemma);
@@ -95,6 +116,27 @@ function popup_handle_add_result(report, lemma) {
     }
 }
 
+/**
+ * 添加掌握的单词回调
+ * @param report
+ * @param lemma
+ */
+function popup_handle_notHandle_add_result(report, lemma) {
+    if (report === "ok") {
+        request_highlight(lemma);
+        display_vocabulary_notHandled_size();
+        document.getElementById('addNotHandledText').value = "";
+        document.getElementById('addOpResult').textContent = chrome.i18n.getMessage("addSuccess");
+    } else if (report === "exists") {
+        document.getElementById('addOpResult').textContent = chrome.i18n.getMessage("addErrorDupp");
+    } else {
+        document.getElementById('addOpResult').textContent = chrome.i18n.getMessage("addErrorBad");
+    }
+}
+
+/**
+ * 添加已经掌握的单词
+ */
 function process_add_word() {
     lexeme = document.getElementById('addText').value;
     if (lexeme === 'dev-mode-on') {
@@ -108,6 +150,24 @@ function process_add_word() {
         return;
     }
     add_lexeme(lexeme, popup_handle_add_result);
+}
+
+/**
+ * 添加生词
+ */
+function process_add_notHandled_word() {
+    lexeme = document.getElementById('addText').value;
+    if (lexeme === 'dev-mode-on') {
+        chrome.storage.local.set({"wd_developer_mode": true});
+        document.getElementById('addText').value = "";
+        return;
+    }
+    if (lexeme === 'dev-mode-off') {
+        chrome.storage.local.set({"wd_developer_mode": false});
+        document.getElementById('addText').value = "";
+        return;
+    }
+    add_lexemeToNotHandle(lexeme, popup_handle_notHandle_add_result);
 }
 
 function process_rate(increase) {
@@ -153,14 +213,26 @@ function init_controls() {
         document.getElementById("rateP10").addEventListener("click", process_rate_p10);
         document.getElementById("changeMode").addEventListener("click", process_mode_switch);
 
+        // 设置nothandled 相关动作
+        document.getElementById("showNotHandledVocab").addEventListener("click", process_notHandled_show);
+        document.getElementById("addNotHandledWord").addEventListener("click", process_add_notHandled_word);
+
+
         document.getElementById("addText").addEventListener("keyup", function(event) {
             event.preventDefault();
             if (event.keyCode == 13) {
                 process_add_word();
             }
         });
+        document.getElementById("addNotHandledWord").addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode == 13) {
+                process_add_notHandled_word();
+            }
+        });
 
         display_vocabulary_size();
+        display_vocabulary_notHandled_size();
 
         chrome.storage.local.get(['wd_show_percents', 'wd_is_enabled', 'wd_word_max_rank'], function(result) {
             var show_percents = result.wd_show_percents;
