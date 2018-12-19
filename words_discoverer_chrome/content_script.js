@@ -391,9 +391,23 @@ function bubble_handle_tts(lexeme) {
 }
 
 
+/**
+ * 添加成功去除高亮显示
+ * @param report
+ * @param lemma
+ */
 function bubble_handle_add_result(report, lemma) {
     if (report === "ok") {
         unhighlight(lemma);
+    }
+}
+
+/**
+ * 添加到生词本成功 高亮显示
+ */
+function bubble_handle_notHandled_add_result(report, lemma) {
+    if (report === "ok") {
+        highlight(lemma);
     }
 }
 
@@ -423,6 +437,15 @@ function create_bubble() {
         add_lexeme(current_lexeme, bubble_handle_add_result);
     });
     bubbleDOM.appendChild(addButton);
+
+    var addNotHandledButton = document.createElement('button');
+    addNotHandledButton.setAttribute('class', 'wdAddButton');
+    addNotHandledButton.textContent = chrome.i18n.getMessage("menuItemNotHandled");
+    addNotHandledButton.style.marginBottom = "4px";
+    addNotHandledButton.addEventListener("click", function () {
+        add_lexemeToNotHandle(current_lexeme, bubble_handle_notHandled_add_result);
+    });
+    bubbleDOM.appendChild(addNotHandledButton);
 
     var speakButton = document.createElement('button');
     speakButton.setAttribute('class', 'wdAddButton');

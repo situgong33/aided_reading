@@ -11,6 +11,10 @@
     "message": "添加到词汇",
     "description": "Text in context menu"
   },
+  "menuItemNotHandled": {
+    "message": "添加到Not Handled",
+    "description": "Text in context menu"
+  },
   "rateTranslateDbg": {
     "message": "不突出显示100 最常用的英语单词"
   },
