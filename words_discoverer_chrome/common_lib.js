@@ -139,6 +139,25 @@ function add_lexemeToNotHandle(lexeme, result_handler) {
             }
         }
 
+        var new_state = {'wd_user_not_handled': wd_user_not_handled};
+
+        // 从用户导入的单词中删除
+        if (typeof user_vocabulary !== 'undefined') {
+            if (user_vocabulary.hasOwnProperty(key)) {
+                delete user_vocabulary[key];
+                new_state['wd_user_vocabulary'] = user_vocabulary;
+                chrome.storage.local.set(new_state);
+            }
+        }
+
+        // 从已经掌握的库中删除
+        if (typeof wd_user_vocab_added !== 'undefined') {
+            if (wd_user_vocab_added.hasOwnProperty(key)) {
+                delete wd_user_vocab_added[key];
+                new_state['wd_user_vocab_added'] = wd_user_vocab_added;
+                chrome.storage.local.set(new_state);
+            }
+        }
 
 
         if (typeof wd_user_not_handled == 'undefined') {
@@ -149,28 +168,6 @@ function add_lexemeToNotHandle(lexeme, result_handler) {
             result_handler("exists", key);
             return;
         }
-
-        var new_state = {'wd_user_not_handled': wd_user_not_handled};
-
-
-
-        // 从已经掌握的库中删除
-        if (typeof wd_user_vocab_added !== 'undefined') {
-            if (wd_user_vocab_added.hasOwnProperty(key)) {
-                delete wd_user_vocab_added[key];
-                new_state['wd_user_vocab_added'] = wd_user_vocab_added;
-            }
-        }
-
-        // 从用户导入的单词中删除
-
-        if (typeof user_vocabulary !== 'undefined') {
-            if (user_vocabulary.hasOwnProperty(key)) {
-                delete user_vocabulary[key];
-                new_state['wd_user_vocabulary'] = user_vocabulary;
-            }
-        }
-
 
         // 添加到用户没有掌握的单词中 用户需要记忆的库中 wd_user_vocab_need_learn_add
         wd_user_not_handled[key] = 1;

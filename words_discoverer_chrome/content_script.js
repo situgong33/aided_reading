@@ -217,9 +217,19 @@ function text_to_hl_nodes(text, dst) {
             ibegin += tokens[wnum].length + 1;
             wnum += 1;
         }
+        // 字典中是否存在此值
         if (dict_words.hasOwnProperty(tokens[wnum])) {
             num_good += 1;
         }
+
+        // 生词本中单词高亮
+        if (wd_user_not_handled.hasOwnProperty(tokens[wnum])) {
+            num_good += 1;
+        }
+
+
+
+
         if (match) {
             matches.push(match);
         } else {
@@ -542,6 +552,7 @@ function initForPage() {
         //         sync_if_needed();
         //     });
         // }
+
 
 
         //TODO simultaneously send page language request here
