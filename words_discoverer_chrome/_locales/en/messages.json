@@ -11,6 +11,14 @@
         "message": "Add to vocabulary",
         "description": "Text in context menu"
     },
+    "menuItemNotHandled": {
+        "message": "添加到Not Handled",
+        "description": "Text in context menu"
+    },
+    "deleteAll": {
+        "message": "删除所有，一键清空",
+        "description": "Text in context menu"
+    },
     "rateTranslateDbg": {
         "message": "Not highlighting 100 most common English words"
     },

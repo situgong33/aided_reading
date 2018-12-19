@@ -15,6 +15,10 @@
     "message": "添加到Not Handled",
     "description": "Text in context menu"
   },
+  "deleteAll": {
+    "message": "删除所有，一键清空",
+    "description": "Text in context menu"
+  },
   "rateTranslateDbg": {
     "message": "不突出显示100 最常用的英语单词"
   },

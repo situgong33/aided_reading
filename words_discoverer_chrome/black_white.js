@@ -31,6 +31,28 @@ function process_delete_vocab_entry(key) {
     });
 }
 
+function process_delete_all_entry(listName) {
+    chrome.storage.local.get(['wd_user_vocabulary', 'wd_user_not_handled'], function(result) {
+        var user_vocabulary = result.wd_user_vocabulary;
+        var wd_user_not_handled = result.wd_user_not_handled;
+
+        var new_state = {'wd_user_vocabulary': user_vocabulary};
+        if (list_name === 'wd_user_vocabulary') {
+            new_state = {'wd_user_vocabulary': {}};
+        } else if (list_name === 'wd_user_not_handled') {
+            new_state = {'wd_user_not_handled': {}};
+        }
+
+        if (list_name === 'wd_user_vocabulary') {
+            chrome.storage.local.set(new_state, sync_if_needed);
+            show_user_list('wd_user_vocabulary', {});
+        } else if (list_name === 'wd_user_not_handled') {
+            chrome.storage.local.set(new_state, sync_if_needed);
+            show_user_list('wd_user_not_handled', {});
+        }
+    });
+}
+
 // 从没有掌握中删除
 function process_delete_user_not_handled_entry(key,text) {
     chrome.storage.local.get(['wd_user_vocabulary','wd_user_not_handled'], function(result) {
@@ -62,6 +84,7 @@ function create_button(list_name, text) {
     }
     var img = document.createElement("img");
     img.setAttribute("src", "delete.png");
+    img.setAttribute("style","max-width: 34px;max-height: 34px")
     result.appendChild(img);
     return result;
 }
@@ -76,6 +99,10 @@ function create_label(text) {
 
 function show_user_list(list_name, user_list) {
     console.log("show user List: "+list_name);
+
+
+
+
     var keys = []
     for (var key in user_list) {
         if (user_list.hasOwnProperty(key)) {
@@ -101,6 +128,11 @@ function show_user_list(list_name, user_list) {
         div_element.appendChild(create_label(key));
         div_element.appendChild(document.createElement("br"));
     }
+    // deleteAllButtonAction
+    var div_allButton = document.getElementById("deleteAllButton");
+    div_allButton.addEventListener("click", function(){ process_delete_all_entry(list_name,this.expression_text); });
+
+
 }
 
 
