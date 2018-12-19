@@ -399,6 +399,7 @@ function bubble_handle_tts(lexeme) {
 function bubble_handle_add_result(report, lemma) {
     if (report === "ok") {
         unhighlight(lemma);
+        hideBubble(true);
     }
 }
 
@@ -408,6 +409,7 @@ function bubble_handle_add_result(report, lemma) {
 function bubble_handle_notHandled_add_result(report, lemma) {
     if (report === "ok") {
         highlight(lemma);
+        hideBubble(true);
     }
 }
 
