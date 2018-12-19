@@ -78,7 +78,8 @@ function create_button(list_name, text) {
     if (list_name === 'wd_user_vocabulary') {
         result.addEventListener("click", function(){ process_delete_vocab_entry(this.expression_text); });
     } else if (list_name === 'wd_user_not_handled') {
-        result.addEventListener("click", function(){ process_delete_user_not_handled_entry(list_name, this.expression_text); });
+        // 防止误删 改为双击删除事件
+        result.addEventListener("dblclick", function(){ process_delete_user_not_handled_entry(list_name, this.expression_text); });
     } else {
         result.addEventListener("click", function(){ process_delete_simple(list_name, this.expression_text); });
     }
