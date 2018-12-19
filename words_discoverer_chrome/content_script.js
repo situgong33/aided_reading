@@ -384,6 +384,9 @@ function highlight(lemma) {
     //     span.setAttribute("style", "font-weight:bold;color:red;font-size:inherit;display:inline;");
     //     span.setAttribute("class", "wdautohl_cmV0YWxpYXRvcnk_");
     // }
+    // TODO 目前高亮显示 采取的是重新绘制整个页面
+    console.log("ReRender the whole page. STUPID!!!!");
+    initForPage();
 }
 
 function get_verdict(is_enabled, black_list, white_list, hostname) {
