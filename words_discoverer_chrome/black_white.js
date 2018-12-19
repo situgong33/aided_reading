@@ -131,11 +131,56 @@ function show_user_list(list_name, user_list) {
     }
     // deleteAllButtonAction
     var div_allButton = document.getElementById("deleteAllButton");
-    div_allButton.addEventListener("click", function(){ process_delete_all_entry(list_name,this.expression_text); });
+    div_allButton.addEventListener("dblclick", function(){
+        var retVal = confirm("Are you sure delete All Vocabulary ? Cannot restored!!!");
+        if( retVal == true ){
+            exportDict(list_name);
+            process_delete_all_entry(list_name,this.expression_text);
+        } else{
+        }
+    });
+
+    var export_allButton = document.getElementById("exportAllButton");
+    export_allButton.addEventListener("click", function(){
+        exportDict(list_name);
+    });
 
 
 }
 
+/**
+ * 导出单词
+ */
+function exportDict(dict_name) {
+    console.log("export dict: "+ dict_name);
+    chrome.storage.local.get(['wd_user_vocabulary','wd_user_not_handled'], function (result) {
+        var wd_user_not_handled = result.wd_user_not_handled;
+        var user_vocabulary = result.wd_user_vocabulary;
+        keys = [];
+        var textName = "my_vocabulary_"+getTimeStr('yyyyMMdd_hh-mm-ss_S')+"_.txt";
+        if (dict_name === 'wd_user_vocabulary') {
+            for (var key in user_vocabulary) {
+                if (user_vocabulary.hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+        }
+
+
+        if (dict_name === 'wd_user_not_handled') {
+            textName = "my_notHandled_vocabulary_"+getTimeStr('yyyyMMdd_hh-mm-ss_S')+"_.txt";
+            for (var key in wd_user_not_handled) {
+                if (wd_user_not_handled.hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+        }
+
+        var file_content = keys.join('\r\n')
+        var blob = new Blob([file_content], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, textName, true);
+    });
+}
 
 function process_display() {
 

@@ -18,13 +18,22 @@
     }
 </style>
 <title>Your Vocabulary</title>
+<script src="FileSaver.js"></script>
 <script src="common_lib.js"></script>
 <script src="black_white.js"></script>
 </head>
 <body>
 
-<div id="deleteAllDiv" style="background: aqua;position: absolute;bottom: 34px;right: 34px;text-align: center" title="delete all world don't click">
-    <button class="deleteButton" id="deleteAllButton" style="background: aqua; color: white;text-align: center;padding: 5px">
+<div id="exportAllDiv" style="float: right;margin-right:34px;margin-top: 34px;text-align: center" title="数据导出">
+    <button class="deleteButton" id="exportAllButton" style=" color: white;text-align: center;padding: 5px">
+        <img src="export.png" style="max-width: 34px;max-height: 34px">
+    </button>
+    <br>
+    <p class="deleteButton"  style="padding:2px;background: aqua; color: red;font-size:10px;max-width: 128px;text-align: center"> Export Data</p>
+</div>
+
+<div id="deleteAllDiv" style="position: absolute;bottom: 34px;right: 34px;text-align: center" title="delete all world don't click">
+    <button class="deleteButton" id="deleteAllButton" style=" color: white;text-align: center;padding: 5px">
         <img src="deleteall.png" style="max-width: 34px;max-height: 34px">
     </button>
     <br>
