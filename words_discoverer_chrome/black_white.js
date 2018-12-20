@@ -145,7 +145,29 @@ function show_user_list(list_name, user_list) {
         exportDict(list_name);
     });
 
+    var export_allButton = document.getElementById("importAllButton");
 
+    if (list_name === 'wd_user_vocabulary') {
+        export_allButton.addEventListener("click", function(){
+            process_import_vocab();
+        });
+    } else if (list_name === 'wd_user_not_handled') {
+        export_allButton.addEventListener("click", function(){
+            process_import_vocab_nothand();
+        });
+    }
+
+
+
+}
+
+function process_import_vocab() {
+    chrome.tabs.create({'url': chrome.extension.getURL('import.html')}, function (tab) {
+    });
+}
+function process_import_vocab_nothand() {
+    chrome.tabs.create({'url': chrome.extension.getURL('importnothand.html')}, function (tab) {
+    });
 }
 
 /**
