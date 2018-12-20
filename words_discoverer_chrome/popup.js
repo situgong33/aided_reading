@@ -2,29 +2,72 @@ var dict_size = null;
 var enabled_mode = true;
 
 
+/**
+ *
+ * chrome.tabs.getSelected can worked in Chrome, but bot worked in Firefox
+ *
+ *
+ * chrome.tabs.getSelected
+ * This method has been deprecated. Use
+ * browser.tabs.query({active: true}) instead.
+ * in Firefox used browser.tabs.query({active: true}) insted,
+ * first add blow code to manifes.json
+ *
+ * "permissions": [
+ *  "  tabs"
+ *  ]
+ */
 function display_mode() {
-    chrome.tabs.getSelected(null, function (tab) {
-        var url = new URL(tab.url);
-        var domain = url.hostname;
-        document.getElementById("addHostName").textContent = domain;
-        if (enabled_mode) {
-            document.getElementById("modeHeader").textContent = chrome.i18n.getMessage("enabledDescription");
-            document.getElementById("addToListLabel").textContent = chrome.i18n.getMessage("addSkippedLabel");
-            document.getElementById("addToListLabel").href = chrome.extension.getURL('black_list.html');
-            chrome.storage.local.get(["wd_black_list",], function(result) {
-                var black_list = result.wd_black_list;
-                document.getElementById("addToList").checked = black_list.hasOwnProperty(domain);
-            });
-        } else {
-            document.getElementById("modeHeader").textContent = chrome.i18n.getMessage("disabledDescription");
-            document.getElementById("addToListLabel").textContent = chrome.i18n.getMessage("addFavoritesLabel");
-            document.getElementById("addToListLabel").href = chrome.extension.getURL('white_list.html');
-            chrome.storage.local.get(["wd_white_list",], function(result) {
-                var white_list = result.wd_white_list;
-                document.getElementById("addToList").checked = white_list.hasOwnProperty(domain);
-            });
-        }
-    });
+    if( navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ){
+        browser.tabs.query({active: true}).then((tabs) => {
+        // chrome.tabs.getSelected(null, function (tab) {
+            var tab = tabs[0];
+            var url = new URL(tab.url);
+            var domain = url.hostname;
+            document.getElementById("addHostName").textContent = domain;
+            if (enabled_mode) {
+                document.getElementById("modeHeader").textContent = chrome.i18n.getMessage("enabledDescription");
+                document.getElementById("addToListLabel").textContent = chrome.i18n.getMessage("addSkippedLabel");
+                document.getElementById("addToListLabel").href = chrome.extension.getURL('black_list.html');
+                chrome.storage.local.get(["wd_black_list",], function(result) {
+                    var black_list = result.wd_black_list;
+                    document.getElementById("addToList").checked = black_list.hasOwnProperty(domain);
+                });
+            } else {
+                document.getElementById("modeHeader").textContent = chrome.i18n.getMessage("disabledDescription");
+                document.getElementById("addToListLabel").textContent = chrome.i18n.getMessage("addFavoritesLabel");
+                document.getElementById("addToListLabel").href = chrome.extension.getURL('white_list.html');
+                chrome.storage.local.get(["wd_white_list",], function(result) {
+                    var white_list = result.wd_white_list;
+                    document.getElementById("addToList").checked = white_list.hasOwnProperty(domain);
+                });
+            }
+        });
+    }else{
+        chrome.tabs.getSelected(null, function (tab) {
+            var url = new URL(tab.url);
+            var domain = url.hostname;
+            document.getElementById("addHostName").textContent = domain;
+            if (enabled_mode) {
+                document.getElementById("modeHeader").textContent = chrome.i18n.getMessage("enabledDescription");
+                document.getElementById("addToListLabel").textContent = chrome.i18n.getMessage("addSkippedLabel");
+                document.getElementById("addToListLabel").href = chrome.extension.getURL('black_list.html');
+                chrome.storage.local.get(["wd_black_list",], function(result) {
+                    var black_list = result.wd_black_list;
+                    document.getElementById("addToList").checked = black_list.hasOwnProperty(domain);
+                });
+            } else {
+                document.getElementById("modeHeader").textContent = chrome.i18n.getMessage("disabledDescription");
+                document.getElementById("addToListLabel").textContent = chrome.i18n.getMessage("addFavoritesLabel");
+                document.getElementById("addToListLabel").href = chrome.extension.getURL('white_list.html');
+                chrome.storage.local.get(["wd_white_list",], function(result) {
+                    var white_list = result.wd_white_list;
+                    document.getElementById("addToList").checked = white_list.hasOwnProperty(domain);
+                });
+            }
+        });
+    }
+
 }
 
 /**
@@ -35,7 +78,9 @@ function process_checkbox() {
 
     if( navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ){
         // Do something in Firefox
-        chrome.tabs.getSelected(null, function (tab) {
+        browser.tabs.query({active: true}).then((tabs) => {
+        // chrome.tabs.getSelected(null, function (tab) {
+            var tab = tabs[0];
             var url = new URL(tab.url);
             var domain = url.hostname;
             document.getElementById("addHostName").textContent = domain;

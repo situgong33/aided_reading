@@ -13,6 +13,7 @@
   },
   "author": "Dmitry Ignatovich",
   "permissions": [
+    "tabs",
     "activeTab",
     "storage",
     "unlimitedStorage",
