@@ -27,25 +27,52 @@ function display_mode() {
     });
 }
 
+/**
+ * 兼容chrome 和 firefox
+ */
 function process_checkbox() {
     checkboxElem = document.getElementById("addToList");
-    chrome.tabs.getSelected(null, function (tab) {
-        var url = new URL(tab.url);
-        var domain = url.hostname;
-        document.getElementById("addHostName").textContent = domain;
-        var list_name = enabled_mode ? "wd_black_list" : "wd_white_list";
-        chrome.storage.local.get([list_name], function(result) {
-            var site_list = result[list_name];
-            if (checkboxElem.checked) {
-                site_list[domain] = 1;
-            } else {
-                delete site_list[domain];
-            }
-            chrome.storage.local.set({[list_name]: site_list}, function() {
-                display_mode();
+
+    if( navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ){
+        // Do something in Firefox
+        browser.tabs.getSelected(null, function (tab) {
+            var url = new URL(tab.url);
+            var domain = url.hostname;
+            document.getElementById("addHostName").textContent = domain;
+            var list_name = enabled_mode ? "wd_black_list" : "wd_white_list";
+            chrome.storage.local.get([list_name], function(result) {
+                var site_list = result[list_name];
+                if (checkboxElem.checked) {
+                    site_list[domain] = 1;
+                } else {
+                    delete site_list[domain];
+                }
+                chrome.storage.local.set({[list_name]: site_list}, function() {
+                    display_mode();
+                });
             });
         });
-    });
+    } else {
+        // Do something in Chrome
+        chrome.tabs.getSelected(null, function (tab) {
+            var url = new URL(tab.url);
+            var domain = url.hostname;
+            document.getElementById("addHostName").textContent = domain;
+            var list_name = enabled_mode ? "wd_black_list" : "wd_white_list";
+            chrome.storage.local.get([list_name], function(result) {
+                var site_list = result[list_name];
+                if (checkboxElem.checked) {
+                    site_list[domain] = 1;
+                } else {
+                    delete site_list[domain];
+                }
+                chrome.storage.local.set({[list_name]: site_list}, function() {
+                    display_mode();
+                });
+            });
+        });
+    }
+
 }
 
 
