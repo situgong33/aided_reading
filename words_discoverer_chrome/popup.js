@@ -35,7 +35,7 @@ function process_checkbox() {
 
     if( navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ){
         // Do something in Firefox
-        browser.tabs.getSelected(null, function (tab) {
+        chrome.tabs.getSelected(null, function (tab) {
             var url = new URL(tab.url);
             var domain = url.hostname;
             document.getElementById("addHostName").textContent = domain;
