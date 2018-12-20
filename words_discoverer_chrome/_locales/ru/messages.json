@@ -1,6 +1,7 @@
 {
   "appName": {
-    "message": "Words Discoverer: Пополни словарный запас.",
+//    "message": "Words Discoverer: Пополни словарный запас.",
+    "message": "WD Hight Word",
     "description": "The title of the application, displayed in the web store."
   },
   "appDesc": {

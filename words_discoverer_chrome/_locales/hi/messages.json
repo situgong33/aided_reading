@@ -1,6 +1,7 @@
 {
   "appName": {
-    "message": "वर्ड डिस्कवर्र: अपनी शब्दावली बढ़ाएं",
+//    "message": "वर्ड डिस्कवर्र: अपनी शब्दावली बढ़ाएं",
+    "message": "WD Hight Word",
     "description": "The title of the application, displayed in the web store."
   },
   "appDesc": {

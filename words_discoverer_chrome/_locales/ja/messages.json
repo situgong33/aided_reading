@@ -1,6 +1,7 @@
 {
   "appName": {
-    "message": "単語発見。あなたの語彙を増強します",
+//    "message": "単語発見。あなたの語彙を増強します",
+    "message": "WD Hight Word",
     "description": "The title of the application, displayed in the web store."
   },
   "appDesc": {

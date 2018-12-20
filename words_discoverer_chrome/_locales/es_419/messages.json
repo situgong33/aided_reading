@@ -1,6 +1,7 @@
 {
   "appName": {
-    "message": "Words Discoverer: Amplía tu vocabulario",
+    "message": "WD Hight Word",
+//    "message": "Words Discoverer: Amplía tu vocabulario",
     "description": "The title of the application, displayed in the web store. Note to the translator: Do not translate first two words 'Words Discoverer'"
   },
   "appDesc": {

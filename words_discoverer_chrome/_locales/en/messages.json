@@ -1,10 +1,10 @@
 {
     "appName": {
-        "message": "Words Discoverer: Expand your vocabulary",
+        "message": "WD Hight Word",
         "description": "The title of the application, displayed in the web store. Note to the translator: Do not translate first two words 'Words Discoverer'"
     },
     "appDesc": {
-        "message": "Highlights rare English dictionary words and idioms on web pages. Facilitates English language learning and expands your vocabulary.",
+        "message": "this extension is copy from Words Discoverer, auth of mechatroner,very thanks,Highlights rare English dictionary words and idioms on web pages. Facilitates English language learning and expands your vocabulary.",
         "description":"The description of the application, displayed in the web store."
     },
     "menuItem": {
