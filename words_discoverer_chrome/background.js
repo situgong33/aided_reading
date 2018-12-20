@@ -401,10 +401,21 @@ function start_sync_sequence(interactive_authorization) {
 }
 
 
+/**
+ * TODO
+ * FireFox 和 Chrome API 不一样的地方
+ * Firefox  Chrome
+ * sender.url = sender.tab.url
+ *
+ *
+ */
 function initialize_extension() {
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.wdm_request == "hostname") {
             tab_url = sender.tab.url;
+            if (tab_url === undefined) {
+                tab_url = sender.url;
+            }
             var url = new URL(tab_url);
             var domain = url.hostname;
             sendResponse({wdm_hostname: domain});

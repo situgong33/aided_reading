@@ -562,6 +562,7 @@ function initForPage() {
         chrome.runtime.sendMessage({wdm_request: "hostname"}, function (response) {
             if (!response) {
                 chrome.runtime.sendMessage({wdm_verdict: 'unknown error'});
+                console.log("no response");
                 return;
             }
             var hostname = response.wdm_hostname;
@@ -611,6 +612,9 @@ function initForPage() {
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
+    console.log("DOMContentLoaded, render the page.");
     initForPage();
 });
+
+
 
