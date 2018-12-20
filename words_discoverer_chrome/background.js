@@ -253,6 +253,10 @@ function find_gdrive_id(query, found_cb, not_found_cb) {
 }
 
 
+/**
+ * 同步掌握的单词
+ * @param entries
+ */
 function apply_cloud_vocab(entries) {
     var sync_date = new Date();
     var sync_time = sync_date.getTime();
@@ -262,6 +266,20 @@ function apply_cloud_vocab(entries) {
         "wd_user_vocab_added": {},
         "wd_user_vocab_deleted": {},
         "wd_last_sync": sync_time
+    };
+    chrome.storage.local.set(new_state, function () {
+        chrome.runtime.sendMessage({'sync_feedback': 1});
+    });
+}
+
+/**
+ * 恢复本地数据
+ * 生词本数据
+ * @param entries
+ */
+function apply_cloud_nothand_vocab(entries) {
+    var new_state = {
+        "wd_user_not_handled": entries
     };
     chrome.storage.local.set(new_state, function () {
         chrome.runtime.sendMessage({'sync_feedback': 1});
@@ -299,6 +317,38 @@ function sync_vocabulary(dir_id, vocab) {
     find_gdrive_id(file_query, merge_vocab_to_cloud, create_new_file_wrap);
 }
 
+/**
+ * 同步生词本
+ * @param dir_id
+ * @param vocab
+ */
+function sync_nothandle_vocabulary(dir_id, vocab) {
+    merge_and_upload_vocab = function (file_id, file_content) {
+        vocab_list = parse_vocabulary(file_content);
+        var entries = list_to_set(vocab_list);
+        // substract_from_set(entries, vocab.deleted);
+        add_to_set(entries, vocab.nothand);
+        merged_content = serialize_vocabulary(entries);
+
+        set_merged_vocab = function () {
+            // 服务端 数据加本地数据，一同上传，然后在同步为本地的
+            apply_cloud_nothand_vocab(entries);
+        }
+        upload_file_content(file_id, merged_content, set_merged_vocab);
+    }
+
+    merge_vocab_to_cloud = function (file_id) {
+        fetch_file_content(file_id, merge_and_upload_vocab);
+    }
+
+    var vocab_file_name = vocab.name + ".txt";
+    var file_query = "name = '" + vocab_file_name + "' and trashed = false and appProperties has { key='wdfile' and value='1' } and '" + dir_id + "' in parents";
+    create_new_file_wrap = function () {
+        create_new_file(vocab_file_name, dir_id, merge_vocab_to_cloud);
+    }
+    find_gdrive_id(file_query, merge_vocab_to_cloud, create_new_file_wrap);
+}
+
 
 function backup_vocabulary(dir_id, vocab, success_cb) {
     merge_and_upload_backup = function (file_id, file_content) {
@@ -320,9 +370,41 @@ function backup_vocabulary(dir_id, vocab, success_cb) {
         create_new_file(backup_file_name, dir_id, merge_backup_to_cloud);
     }
     find_gdrive_id(backup_query, merge_backup_to_cloud, create_new_backup_file_wrap);
+
+}
+
+/**
+ * backup not handled vocab
+ * @param dir_id
+ * @param vocab
+ * @param success_cb
+ */
+function backup_nothand_vocabulary(dir_id, vocab, success_cb) {
+    merge_and_upload_backup = function (file_id, file_content) {
+        vocab_list = parse_vocabulary(file_content);
+        var entries = list_to_set(vocab_list);
+        add_to_set(entries, vocab.nothand);
+        merged_content = serialize_vocabulary(entries);
+        upload_file_content(file_id, merged_content, success_cb);
+    }
+    merge_backup_to_cloud = function (file_id) {
+        fetch_file_content(file_id, merge_and_upload_backup);
+    }
+
+    var backup_file_name = "." + vocab.name + ".backup";
+    var backup_query = "name = '" + backup_file_name + "' and trashed = false and appProperties has { key='wdfile' and value='1' } and '" + dir_id + "' in parents";
+    create_new_backup_file_wrap = function () {
+        create_new_file(backup_file_name, dir_id, merge_backup_to_cloud);
+    }
+    find_gdrive_id(backup_query, merge_backup_to_cloud, create_new_backup_file_wrap);
+
 }
 
 
+/**
+ * 同步和备份单词本
+ * @param vocab
+ */
 function perform_full_sync(vocab) {
     var dir_name = "Words Discoverer Sync";
     var dir_query = "name = '" + dir_name + "' and trashed = false and appProperties has { key='wdfile' and value='1' }";
@@ -338,12 +420,38 @@ function perform_full_sync(vocab) {
     find_gdrive_id(dir_query, backup_and_sync_vocabulary, create_new_dir_wrap);
 }
 
+/**
+ * 同步和备份生词本
+ * not handled
+ * @param vocab
+ */
+function perform_full_notHandled_sync(vocab) {
+    var dir_name = "Words Discoverer Sync";
+    var dir_query = "name = '" + dir_name + "' and trashed = false and appProperties has { key='wdfile' and value='1' }";
+    backup_and_sync_vocabulary = function (dir_id) {
+        sync_vocabulary_wrap = function () {
+            sync_nothandle_vocabulary(dir_id, vocab);
+        }
+        backup_nothand_vocabulary(dir_id, vocab, sync_vocabulary_wrap);
+    }
+    create_new_dir_wrap = function () {
+        create_new_dir(dir_name, backup_and_sync_vocabulary);
+    }
+    find_gdrive_id(dir_query, backup_and_sync_vocabulary, create_new_dir_wrap);
+}
 
+
+/**
+ * 同步 掌握的单词
+ *      生词本
+ */
 function sync_user_vocabularies() {
-    chrome.storage.local.get(['wd_user_vocabulary', 'wd_user_vocab_added', 'wd_user_vocab_deleted'], function (result) {
+    chrome.storage.local.get(['wd_user_vocabulary', 'wd_user_vocab_added', 'wd_user_vocab_deleted','wd_user_not_handled'], function (result) {
         var wd_user_vocabulary = result.wd_user_vocabulary;
         var wd_user_vocab_added = result.wd_user_vocab_added;
         var wd_user_vocab_deleted = result.wd_user_vocab_deleted;
+        var wd_user_not_handled =result.wd_user_not_handled;
+
         if (typeof wd_user_vocabulary === 'undefined') {
             wd_user_vocabulary = {};
         }
@@ -353,13 +461,26 @@ function sync_user_vocabularies() {
         if (typeof wd_user_vocab_deleted === 'undefined') {
             wd_user_vocab_deleted = {};
         }
+
+        if (typeof wd_user_not_handled === 'undefined') {
+            wd_user_not_handled = {};
+        }
+
+
+
         var vocab = {
             "name": "my_vocabulary",
             "all": wd_user_vocabulary,
             "added": wd_user_vocab_added,
-            "deleted": wd_user_vocab_deleted
+            "deleted": wd_user_vocab_deleted,
+            "notHandled":wd_user_not_handled
         };
         perform_full_sync(vocab);
+        var vocabNotHandle = {
+            "name": "my_not_handled_vocabulary",
+            "nothand":wd_user_not_handled
+        };
+        perform_full_notHandled_sync(vocabNotHandle);
     });
 }
 
