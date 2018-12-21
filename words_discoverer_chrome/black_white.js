@@ -101,9 +101,6 @@ function create_label(text) {
 function show_user_list(list_name, user_list) {
     console.log("show user List: "+list_name);
 
-
-
-
     var keys = []
     for (var key in user_list) {
         if (user_list.hasOwnProperty(key)) {
@@ -129,36 +126,6 @@ function show_user_list(list_name, user_list) {
         div_element.appendChild(create_label(key));
         div_element.appendChild(document.createElement("br"));
     }
-    // deleteAllButtonAction
-    var div_allButton = document.getElementById("deleteAllButton");
-    div_allButton.addEventListener("dblclick", function(){
-        var retVal = confirm("Are you sure delete All Vocabulary ? Cannot restored!!!");
-        if( retVal == true ){
-            exportDict(list_name);
-            process_delete_all_entry(list_name,this.expression_text);
-        } else{
-        }
-    });
-
-    var export_allButton = document.getElementById("exportAllButton");
-    export_allButton.addEventListener("click", function(){
-        exportDict(list_name);
-    });
-
-    var export_allButton = document.getElementById("importAllButton");
-
-    if (list_name === 'wd_user_vocabulary') {
-        export_allButton.addEventListener("click", function(){
-            process_import_vocab();
-        });
-    } else if (list_name === 'wd_user_not_handled') {
-        export_allButton.addEventListener("click", function(){
-            process_import_vocab_nothand();
-        });
-    }
-
-
-
 }
 
 function process_import_vocab() {
@@ -224,7 +191,38 @@ function process_display() {
     });
 }
 
+function addControlListiner() {
+    // deleteAllButtonAction
+    var div_allButton = document.getElementById("deleteAllButton");
+    div_allButton.addEventListener("dblclick", function(){
+        var retVal = confirm("Are you sure delete All Vocabulary ? Cannot restored!!!");
+        if( retVal == true ){
+            exportDict(list_name);
+            process_delete_all_entry(list_name,this.expression_text);
+        } else{
+        }
+    });
+
+    var export_allButton = document.getElementById("exportAllButton");
+    export_allButton.addEventListener("click", function(){
+        exportDict(list_name);
+    });
+
+    var export_allButton = document.getElementById("importAllButton");
+
+    if (list_name === 'wd_user_vocabulary') {
+        export_allButton.addEventListener("click", function(){
+            process_import_vocab();
+        });
+    } else if (list_name === 'wd_user_not_handled') {
+        export_allButton.addEventListener("click", function(){
+            process_import_vocab_nothand();
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function(event) {
     console.log("load black_white js");
     process_display();
+    addControlListiner();
 });
